@@ -10,77 +10,100 @@
         .board-grid {
             display: grid;
             grid-template-columns: repeat(7, minmax(0, 1fr));
-            gap: 4px;
+            gap: 6px;
         }
         body {
-            background: linear-gradient(135deg, #1a1c29, #2b1055, #75105b);
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+        .neon-glow {
+            text-shadow: 0 0 10px rgba(236, 72, 153, 0.7), 0 0 20px rgba(59, 130, 246, 0.7);
+        }
     </style>
 </head>
-<body class="min-h-screen p-4 flex flex-col items-center">
+<body class="min-h-screen p-3 md:p-6 flex flex-col items-center justify-between">
 
-    <header class="text-center mb-6">
-        <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-pink-500 to-yellow-400 animate-pulse">
-            HYDRO SNADDERS 🧪
+    <!-- Header -->
+    <header class="text-center mb-4 w-full">
+        <h1 class="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-300 neon-glow">
+            🧪 HYDRO SNADDERS 🧬
         </h1>
-        <p class="text-sm text-cyan-200 mt-1"> SMA Negeri 1 Wonoayu Sidoarjo — "Tunjukkan Karyamu, Raih Harapanmu"</p>
+        <p class="text-xs md:text-sm text-cyan-200 mt-1 font-semibold">SMA Negeri 2 Cikarang Selatan</p>
+        <p class="text-xs text-pink-300 italic mt-0.5">Dibuat oleh: Ira Maya Tri Murningsih — "Tunjukkan Karyamu, Raih Harapanmu"[cite: 1]</p>
     </header>
 
-    <div id="login-screen" class="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-white/20 w-full max-w-md text-center">
-        <h2 class="text-xl font-bold mb-4 text-yellow-300">Masuk Arena Permainan</h2>
-        <input type="text" id="player-name" placeholder="Masukkan Nama Kamu..." class="w-full px-4 py-3 rounded-xl bg-black/40 border border-teal-400 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 mb-4">
-        <button onclick="joinGame()" class="w-full py-3 bg-gradient-to-r from-pink-500 to-teal-400 font-bold rounded-xl shadow-lg hover:opacity-90 transition">MULAI BERMAIN</button>
+    <!-- Login Section -->
+    <div id="login-screen" class="bg-white/10 backdrop-blur-lg p-6 rounded-3xl shadow-2xl border border-white/20 w-full max-w-md text-center my-auto">
+        <h2 class="text-2xl font-bold mb-2 text-yellow-300">Masuk Arena Kimia</h2>
+        <p class="text-xs text-gray-300 mb-6">Siapkan dirimu untuk menaklukkan senyawa hidrokarbon!</p>
+        <input type="text" id="player-name" placeholder="Ketik Nama Kamu di sini..." class="w-full px-4 py-3.5 rounded-2xl bg-black/60 border-2 border-teal-400 text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-pink-500 mb-4 text-center font-bold text-lg">
+        <button type="button" onclick="joinGame()" class="w-full py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-teal-400 font-extrabold rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition tracking-wider text-white text-base cursor-pointer">MULAI BERMAIN 🚀</button>
     </div>
 
-    <div id="game-screen" class="hidden w-full max-w-5xl flex flex-col lg:flex-row gap-6">
+    <!-- Game Screen -->
+    <div id="game-screen" class="hidden w-full max-w-6xl flex flex-col xl:flex-row gap-6 my-auto">
         
-        <div class="flex-1 bg-black/40 p-4 rounded-2xl border border-purple-500/50 shadow-2xl">
+        <!-- Papan Ular Tangga (35 Kotak) -->
+        <div class="flex-1 bg-black/50 p-4 rounded-3xl border border-purple-500/50 shadow-2xl backdrop-blur-md">
             <div id="board" class="board-grid">
-                </div>
+                <!-- Generasi Kotak 1-35 via JS -->
+            </div>
         </div>
 
-        <div class="w-full lg:w-80 bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 flex flex-col justify-between">
+        <!-- Panel Kontrol & Info -->
+        <div class="w-full xl:w-80 bg-white/10 backdrop-blur-md p-5 rounded-3xl border border-white/20 flex flex-col justify-between shadow-2xl">
             <div>
-                <h3 class="text-lg font-bold text-teal-300 mb-3">Pemain yang Bergabung:</h3>
-                <ul id="player-list" class="space-y-2 mb-6 text-sm">
-                    </ul>
-                <div id="dice-result" class="text-center p-4 bg-purple-900/50 rounded-xl border border-pink-500 mb-4">
-                    <p class="text-sm text-gray-300">Lemparan Dadu:</p>
-                    <span id="dice-num" class="text-3xl font-black text-yellow-400">-</span>
+                <h3 class="text-base font-bold text-teal-300 mb-3 border-b border-white/10 pb-2">👥 Daftar Pemain Online:</h3>
+                <ul id="player-list" class="space-y-2 mb-6 text-sm max-h-48 overflow-y-auto pr-1">
+                    <!-- List Player -->
+                </ul>
+                
+                <div id="dice-result" class="text-center p-4 bg-purple-950/60 rounded-2xl border border-pink-500/50 mb-4 shadow-inner">
+                    <p class="text-xs text-gray-300 uppercase tracking-wider font-semibold">Hasil Lemparan Dadu:</p>
+                    <span id="dice-num" class="text-4xl font-black text-yellow-400 drop-shadow-md">-</span>
                 </div>
             </div>
             
-            <button onclick="rollDice()" id="roll-btn" class="w-full py-4 bg-gradient-to-r from-teal-400 to-blue-500 font-extrabold text-lg rounded-xl shadow-xl hover:scale-105 transition">
-                LEMPAR DADU 🎲
+            <button type="button" onclick="rollDice()" id="roll-btn" class="w-full py-4 bg-gradient-to-r from-teal-400 to-blue-600 font-extrabold text-lg rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition text-white tracking-wide cursor-pointer">
+                🎲 LEMPAR DADU
             </button>
         </div>
     </div>
 
-    <div id="quiz-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-900 border border-pink-500 p-6 rounded-2xl max-w-lg w-full shadow-2xl">
-            <h3 class="text-xl font-bold text-pink-400 mb-2">Tantangan Kimia Organik! 💡</h3>
-            <p id="question-text" class="text-white text-base mb-4"></p>
-            <div id="answer-options" class="space-y-2"></div>
+    <!-- Modal Kuis Tantangan Kimia -->
+    <div id="quiz-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-900 border-2 border-pink-500 p-6 rounded-3xl max-w-lg w-full shadow-2xl relative">
+            <div class="absolute -top-4 left-6 bg-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">Tantangan Senyawa Hidrokarbon 💡</div>
+            <p id="question-text" class="text-white text-base md:text-lg font-medium mt-3 mb-5 leading-relaxed"></p>
+            <div id="answer-options" class="space-y-3"></div>
         </div>
     </div>
+
+    <footer class="text-center text-xs text-gray-400 mt-4 w-full">
+        HYDRO SNADDERS Game Edukasi Ular Tangga Hidrokarbon[cite: 1] — Dikembangkan oleh Ira Maya Tri Murningsih
+    </footer>
 
     <script>
         const socket = io();
         let myName = '';
 
-        // Bank Soal Berdasarkan Materi PDF
         const questionsMap = {
-            8: { q: "Apabila senyawa 2-butena direaksikan dengan gas hidrogen, maka hasilnya adalah...", options: ["Butana", "Butena", "Butuna", "2-metilpropana"], correct: 0 },
-            15: { q: "Apabila senyawa 1-butena direaksikan dengan gas hidrogen klorida, maka hasilnya adalah...", options: ["2-klorobutana", "1-klorobutana", "2-butene", "1-butuna"], correct: 0 },
-            21: { q: "Gambarkan struktur atau tentukan jumlah isomer dari C4H10 adalah...", options: ["2", "3", "4", "5"], correct: 0 },
-            35: { q: "Hasil pembakaran sempurna hidrokarbon adalah...", options: ["CO2 dan H2O", "CO dan H2O", "C dan H2O", "CH4 dan O2"], correct: 0 }
+            2: { q: "Rumus umum dari Alkana adalah...", options: ["CnH2n+2", "CnH2n", "CnH2n-2", "CnHn"], correct: 0 },
+            8: { q: "Apabila senyawa 2-butena direaksikan dengan gas hidrogen (Adisi), maka hasil utamanya adalah...", options: ["Butana", "Butena", "Butuna", "2-metilpropana"], correct: 0 },
+            11: { q: "Kimia ada di sekitar kita, dari makanan hingga obat-obatan. Senyawa hidrokarbon rantai lurus jenuh digolongkan ke dalam...", options: ["Alkana", "Alkena", "Alkuna", "Benzena"], correct: 0 },
+            15: { q: "Apabila senyawa 1-butena direaksikan dengan gas hidrogen klorida (HCl), maka hasilnya adalah...", options: ["2-klorobutana", "1-klorobutana", "2-butene", "Kloroetana"], correct: 0 },
+            21: { q: "Jumlah isomer struktur yang dimiliki oleh senyawa alkana dengan rumus molekul C4H10 adalah...", options: ["2", "3", "4", "5"], correct: 0 },
+            26: { q: "Senyawa manakah yang dapat berisomer geometri (isomer cis-trans)?", options: ["2-butena", "1-butena", "Etena", "Propana"], correct: 0 },
+            35: { q: "Hasil utama dari reaksi pembakaran sempurna senyawa hidrokarbon adalah...", options: ["CO2 dan H2O", "CO dan H2O", "C dan H2O", "CH4 dan O2"], correct: 0 }
         };
 
         function joinGame() {
-            const nameInput = document.getElementById('player-name').value;
-            if(!nameInput) return alert('Masukkan nama terlebih dahulu!');
+            const nameInput = document.getElementById('player-name').value.trim();
+            if(!nameInput) {
+                alert('Mohon masukkan nama kamu terlebih dahulu!');
+                return;
+            }
             myName = nameInput;
             
             document.getElementById('login-screen').classList.add('hidden');
@@ -93,51 +116,58 @@
         function generateBoard() {
             const board = document.getElementById('board');
             board.innerHTML = '';
-            // Membuat Grid 35 Kotak Ular Tangga
             for(let i = 35; i >= 1; i--) {
                 const cell = document.createElement('div');
                 cell.id = `cell-${i}`;
-                cell.className = 'h-16 bg-black/30 border border-purple-500/30 rounded-lg flex flex-col justify-between p-1 text-xs relative overflow-hidden';
-                cell.innerHTML = `<span class="font-bold text-gray-400">${i}</span><div id="tokens-${i}" class="flex flex-wrap gap-1 justify-center items-center"></div>`;
+                cell.className = 'h-14 md:h-20 bg-white/5 border border-purple-500/20 rounded-xl flex flex-col justify-between p-1 text-xs relative overflow-hidden transition hover:bg-white/10';
+                
+                let badge = '';
+                if(i === 5 || i === 20) badge = '🚀<span class="text-[9px] text-green-300">Tangga</span>';
+                if(i === 12 || i === 30) badge = '🐍<span class="text-[9px] text-red-300">Ular</span>';
+                if(questionsMap[i]) badge = '❓<span class="text-[9px] text-yellow-300">Soal</span>';
+
+                cell.innerHTML = `<div class="flex justify-between items-center w-full"><span class="font-extrabold text-gray-400 text-xs md:text-sm">${i}</span><span>${badge}</span></div><div id="tokens-${i}" class="flex flex-wrap gap-1 justify-center items-center mt-auto"></div>`;
                 board.appendChild(cell);
             }
         }
 
         function rollDice() {
             socket.emit('roll-dice');
-            document.getElementById('roll-btn').disabled = true;
-            setTimeout(() => document.getElementById('roll-btn').disabled = false, 2000);
+            const btn = document.getElementById('roll-btn');
+            btn.disabled = true;
+            setTimeout(() => btn.disabled = false, 1500);
         }
 
         socket.on('update-players', (players) => {
-            // Bersihkan semua token lama
             for(let i=1; i<=35; i++) {
                 document.getElementById(`tokens-${i}`).innerHTML = '';
             }
 
-            // Update posisi pion
             players.forEach(p => {
                 const tokenContainer = document.getElementById(`tokens-${p.position}`);
                 if(tokenContainer) {
                     const token = document.createElement('div');
-                    token.className = 'w-4 h-4 rounded-full shadow-md border border-white animate-bounce';
+                    token.className = 'w-3.5 h-3.5 md:w-5 md:h-5 rounded-full shadow-lg border-2 border-white animate-pulse';
                     token.style.backgroundColor = p.color;
                     token.title = p.name;
                     tokenContainer.appendChild(token);
                 }
             });
 
-            // Update List Pemain
             const listEl = document.getElementById('player-list');
-            listEl.innerHTML = players.map(p => `<li class="flex items-center justify-between bg-black/30 p-2 rounded-lg border" style="border-color: ${p.color}"><span class="font-bold" style="color: ${p.color}">${p.name}</span><span class="text-xs text-gray-300">Pos: ${p.position}</span></li>`).join('');
+            listEl.innerHTML = players.map(p => `
+                <li class="flex items-center justify-between bg-black/40 p-2.5 rounded-xl border" style="border-color: ${p.color}">
+                    <span class="font-bold truncate max-w-[120px]" style="color: ${p.color}">${p.name}</span>
+                    <span class="text-xs bg-white/10 px-2 py-0.5 rounded-lg text-gray-200">Pos: ${p.position}</span>
+                </li>
+            `).join('');
         });
 
         socket.on('dice-rolled', (data) => {
             document.getElementById('dice-num').innerText = data.diceValue;
             
-            // Cek jika ada soal di kotak tersebut
             if(data.playerName === myName && questionsMap[data.newPos]) {
-                triggerQuiz(data.newPos);
+                setTimeout(() => triggerQuiz(data.newPos), 400);
             }
         });
 
@@ -149,13 +179,14 @@
             
             qData.options.forEach((opt, idx) => {
                 const btn = document.createElement('button');
-                btn.className = 'w-full p-3 bg-purple-800/60 hover:bg-pink-600 rounded-xl text-left text-sm font-semibold transition';
+                btn.type = 'button';
+                btn.className = 'w-full p-3.5 bg-gradient-to-r from-purple-900/80 to-indigo-900/80 hover:from-pink-600 hover:to-purple-600 rounded-2xl text-left text-sm font-semibold transition border border-white/10 shadow cursor-pointer';
                 btn.innerText = opt;
                 btn.onclick = () => {
                     if(idx === qData.correct) {
-                        alert('Jawaban Benar! Pertahankan posisi.');
+                        alert('🎉 Luar Biasa! Jawaban Kamu Benar.');
                     } else {
-                        alert('Jawaban Kurang Tepat!');
+                        alert('❌ Kurang Tepat! Tetap semangat belajar kimianya.');
                     }
                     document.getElementById('quiz-modal').classList.add('hidden');
                 };
