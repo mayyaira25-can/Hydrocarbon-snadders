@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HYDRO SNADDERS - Game Edukasi Ular Tangga Hidrokarbon</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .board-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 4px;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1c29, #2b1055, #75105b);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 flex flex-col items-center">
+
+    <header class="text-center mb-6">
+        <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-pink-500 to-yellow-400 animate-pulse">
+            HYDRO SNADDERS 🧪
+        </h1>
+        <p class="text-sm text-cyan-200 mt-1"> SMA Negeri 1 Wonoayu Sidoarjo — "Tunjukkan Karyamu, Raih Harapanmu"</p>
+    </header>
+
+    <div id="login-screen" class="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-white/20 w-full max-w-md text-center">
+        <h2 class="text-xl font-bold mb-4 text-yellow-300">Masuk Arena Permainan</h2>
+        <input type="text" id="player-name" placeholder="Masukkan Nama Kamu..." class="w-full px-4 py-3 rounded-xl bg-black/40 border border-teal-400 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 mb-4">
+        <button onclick="joinGame()" class="w-full py-3 bg-gradient-to-r from-pink-500 to-teal-400 font-bold rounded-xl shadow-lg hover:opacity-90 transition">MULAI BERMAIN</button>
+    </div>
+
+    <div id="game-screen" class="hidden w-full max-w-5xl flex flex-col lg:flex-row gap-6">
+        
+        <div class="flex-1 bg-black/40 p-4 rounded-2xl border border-purple-500/50 shadow-2xl">
+            <div id="board" class="board-grid">
+                </div>
+        </div>
+
+        <div class="w-full lg:w-80 bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 flex flex-col justify-between">
+            <div>
+                <h3 class="text-lg font-bold text-teal-300 mb-3">Pemain yang Bergabung:</h3>
+                <ul id="player-list" class="space-y-2 mb-6 text-sm">
+                    </ul>
+                <div id="dice-result" class="text-center p-4 bg-purple-900/50 rounded-xl border border-pink-500 mb-4">
+                    <p class="text-sm text-gray-300">Lemparan Dadu:</p>
+                    <span id="dice-num" class="text-3xl font-black text-yellow-400">-</span>
+                </div>
+            </div>
+            
+            <button onclick="rollDice()" id="roll-btn" class="w-full py-4 bg-gradient-to-r from-teal-400 to-blue-500 font-extrabold text-lg rounded-xl shadow-xl hover:scale-105 transition">
+                LEMPAR DADU 🎲
+            </button>
+        </div>
+    </div>
+
+    <div id="quiz-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-900 border border-pink-500 p-6 rounded-2xl max-w-lg w-full shadow-2xl">
+            <h3 class="text-xl font-bold text-pink-400 mb-2">Tantangan Kimia Organik! 💡</h3>
+            <p id="question-text" class="text-white text-base mb-4"></p>
+            <div id="answer-options" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+        let myName = '';
+
+        // Bank Soal Berdasarkan Materi PDF
+        const questionsMap = {
+            8: { q: "Apabila senyawa 2-butena direaksikan dengan gas hidrogen, maka hasilnya adalah...", options: ["Butana", "Butena", "Butuna", "2-metilpropana"], correct: 0 },
+            15: { q: "Apabila senyawa 1-butena direaksikan dengan gas hidrogen klorida, maka hasilnya adalah...", options: ["2-klorobutana", "1-klorobutana", "2-butene", "1-butuna"], correct: 0 },
+            21: { q: "Gambarkan struktur atau tentukan jumlah isomer dari C4H10 adalah...", options: ["2", "3", "4", "5"], correct: 0 },
+            35: { q: "Hasil pembakaran sempurna hidrokarbon adalah...", options: ["CO2 dan H2O", "CO dan H2O", "C dan H2O", "CH4 dan O2"], correct: 0 }
+        };
+
+        function joinGame() {
+            const nameInput = document.getElementById('player-name').value;
+            if(!nameInput) return alert('Masukkan nama terlebih dahulu!');
+            myName = nameInput;
+            
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            
+            socket.emit('join-game', myName);
+            generateBoard();
+        }
+
+        function generateBoard() {
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+            // Membuat Grid 35 Kotak Ular Tangga
+            for(let i = 35; i >= 1; i--) {
+                const cell = document.createElement('div');
+                cell.id = `cell-${i}`;
+                cell.className = 'h-16 bg-black/30 border border-purple-500/30 rounded-lg flex flex-col justify-between p-1 text-xs relative overflow-hidden';
+                cell.innerHTML = `<span class="font-bold text-gray-400">${i}</span><div id="tokens-${i}" class="flex flex-wrap gap-1 justify-center items-center"></div>`;
+                board.appendChild(cell);
+            }
+        }
+
+        function rollDice() {
+            socket.emit('roll-dice');
+            document.getElementById('roll-btn').disabled = true;
+            setTimeout(() => document.getElementById('roll-btn').disabled = false, 2000);
+        }
+
+        socket.on('update-players', (players) => {
+            // Bersihkan semua token lama
+            for(let i=1; i<=35; i++) {
+                document.getElementById(`tokens-${i}`).innerHTML = '';
+            }
+
+            // Update posisi pion
+            players.forEach(p => {
+                const tokenContainer = document.getElementById(`tokens-${p.position}`);
+                if(tokenContainer) {
+                    const token = document.createElement('div');
+                    token.className = 'w-4 h-4 rounded-full shadow-md border border-white animate-bounce';
+                    token.style.backgroundColor = p.color;
+                    token.title = p.name;
+                    tokenContainer.appendChild(token);
+                }
+            });
+
+            // Update List Pemain
+            const listEl = document.getElementById('player-list');
+            listEl.innerHTML = players.map(p => `<li class="flex items-center justify-between bg-black/30 p-2 rounded-lg border" style="border-color: ${p.color}"><span class="font-bold" style="color: ${p.color}">${p.name}</span><span class="text-xs text-gray-300">Pos: ${p.position}</span></li>`).join('');
+        });
+
+        socket.on('dice-rolled', (data) => {
+            document.getElementById('dice-num').innerText = data.diceValue;
+            
+            // Cek jika ada soal di kotak tersebut
+            if(data.playerName === myName && questionsMap[data.newPos]) {
+                triggerQuiz(data.newPos);
+            }
+        });
+
+        function triggerQuiz(pos) {
+            const qData = questionsMap[pos];
+            document.getElementById('question-text').innerText = qData.q;
+            const optContainer = document.getElementById('answer-options');
+            optContainer.innerHTML = '';
+            
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full p-3 bg-purple-800/60 hover:bg-pink-600 rounded-xl text-left text-sm font-semibold transition';
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if(idx === qData.correct) {
+                        alert('Jawaban Benar! Pertahankan posisi.');
+                    } else {
+                        alert('Jawaban Kurang Tepat!');
+                    }
+                    document.getElementById('quiz-modal').classList.add('hidden');
+                };
+                optContainer.appendChild(btn);
+            });
+
+            document.getElementById('quiz-modal').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
